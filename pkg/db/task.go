@@ -79,7 +79,6 @@ func GetTask(id string) (*Task, error) {
 		return nil, errors.New("база данных не инициализирована")
 	}
 
-	var taskID int64
 	taskID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return nil, errors.New("неверный формат идентификатора")
@@ -126,6 +125,64 @@ func UpdateTask(task *Task) error {
 
 	if count == 0 {
 		return fmt.Errorf("задача с id %s не найдена", task.ID)
+	}
+
+	return nil
+}
+
+func UpdateTaskDate(id string, newDate string) error {
+	if DB == nil {
+		return errors.New("база данных не инициализирована")
+	}
+
+	taskID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return errors.New("неверный формат идентификатора")
+	}
+
+	query := `UPDATE scheduler SET date = ? WHERE id = ?`
+	
+	res, err := DB.Exec(query, newDate, taskID)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return fmt.Errorf("задача с id %s не найдена", id)
+	}
+
+	return nil
+}
+
+func DeleteTask(id string) error {
+	if DB == nil {
+		return errors.New("база данных не инициализирована")
+	}
+
+	taskID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return errors.New("неверный формат идентификатора")
+	}
+
+	query := `DELETE FROM scheduler WHERE id = ?`
+	
+	res, err := DB.Exec(query, taskID)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return fmt.Errorf("задача с id %s не найдена", id)
 	}
 
 	return nil

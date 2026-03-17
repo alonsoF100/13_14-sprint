@@ -15,6 +15,8 @@ func TaskHandler(w http.ResponseWriter, r *http.Request) {
 		GetTaskHandler(w, r)
 	case http.MethodPut:
 		UpdateTaskHandler(w, r)
+	case http.MethodDelete:
+		DeleteTaskHandler(w, r)
 	default:
 		writeJSONError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
 	}
@@ -61,6 +63,21 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := db.UpdateTask(&task); err != nil {
 		writeJSONError(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSONResponse(w, map[string]string{})
+}
+
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		writeJSONError(w, "Не указан идентификатор", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.DeleteTask(id); err != nil {
+		writeJSONError(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
