@@ -50,7 +50,7 @@ func handleDaily(now time.Time, start time.Time, parts []string) (string, error)
 	next := start
 	for {
 		next = next.AddDate(0, 0, interval)
-		if afterNow(next, now) {
+		if AfterNow(next, now) {
 			break
 		}
 		if next.Year() > now.Year()+10 {
@@ -65,7 +65,7 @@ func handleYearly(now time.Time, start time.Time) (string, error) {
 	next := start
 	for {
 		next = next.AddDate(1, 0, 0)
-		if afterNow(next, now) {
+		if AfterNow(next, now) {
 			break
 		}
 		if next.Year() > now.Year()+100 {
@@ -75,7 +75,7 @@ func handleYearly(now time.Time, start time.Time) (string, error) {
 	return next.Format(DateFormat), nil
 }
 
-func afterNow(date time.Time, now time.Time) bool {
+func AfterNow(date time.Time, now time.Time) bool {
 	y1, m1, d1 := date.Date()
 	y2, m2, d2 := now.Date()
 
