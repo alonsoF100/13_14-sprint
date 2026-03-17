@@ -66,15 +66,3 @@ func processTaskDate(task *db.Task) error {
 
 	return nil
 }
-
-func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(map[string]string{"error": message})
-}
-
-func writeJSONResponse(w http.ResponseWriter, data map[string]string) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(data)
-}

@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"strconv"
 )
 
 type Task struct {
@@ -30,4 +31,43 @@ func AddTask(task *Task) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func GetTasks(limit int) ([]*Task, error) {
+	if DB == nil {
+		return nil, errors.New("база данных не инициализирована")
+	}
+
+	query := `SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?`
+
+	rows, err := DB.Query(query, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []*Task
+
+	for rows.Next() {
+		task := &Task{}
+		var id int64
+
+		err := rows.Scan(&id, &task.Date, &task.Title, &task.Comment, &task.Repeat)
+		if err != nil {
+			return nil, err
+		}
+
+		task.ID = strconv.FormatInt(id, 10)
+		tasks = append(tasks, task)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if tasks == nil {
+		tasks = make([]*Task, 0)
+	}
+
+	return tasks, nil
 }
