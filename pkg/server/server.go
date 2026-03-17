@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/alonsoF100/13_14-sprint/pkg/api"
 )
 
 func Start() error {
@@ -21,6 +23,8 @@ func Start() error {
 			return fmt.Errorf("неверный формат порта: %s", portStr)
 		}
 	}
+
+	api.Init()
 
 	webDir := "./web"
 
